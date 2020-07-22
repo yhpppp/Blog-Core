@@ -36,7 +36,7 @@ namespace Blog.Core
                 //options.ReturnHttpNotAcceptable = true;
                 //options.OutputFormatters.Add(new XmlDataContractSerializerOutputFormatter());
             }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
+            #region Swagger UI Service
             services.AddSwaggerGen(config =>
             {
                 config.SwaggerDoc("v1", new Info
@@ -56,12 +56,69 @@ namespace Blog.Core
                 var xmlModelPath = Path.Combine(basePath, "Blog.Core.Model.xml");
                 config.IncludeXmlComments(xmlModelPath);
 
-             
+
+                #region Token绑定到ConfigureServices
+                //添加header验证信息
+                //c.OperationFilter<SwaggerHeader>();
+
+                // 发行人
+                var IssuerName = (Configuration.GetSection("Audience"))["Issuer"];
+                var security = new Dictionary<string, IEnumerable<string>> { { IssuerName, new string[] { } }, };
+                config.AddSecurityRequirement(security);
+
+                //方案名称“Autho.JWT”可自定义，上下一致即可
+                config.AddSecurityDefinition(IssuerName, new ApiKeyScheme
+                {
+                    Description = "JWT授权(数据将在请求头中进行传输) 直接在下框中输入Bearer {token}（注意两者之间是一个空格）\"",
+                    Name = "Authorization",//jwt默认的参数名称
+                    In = "header",//jwt默认存放Authorization信息的位置(请求头中)
+                    Type = "apiKey"
+                });
+                #endregion
+
             });
+            #endregion
 
-   
+            #region 基于策略的授权
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Client", policy => policy.RequireRole("Client").Build());
+                options.AddPolicy("Admin", policy => policy.RequireRole("Admin").Build());
+                options.AddPolicy("SystemOrAdmin", policy => policy.RequireRole("Admin", "System"));
+            });
+            #endregion
 
-          
+            #region 【认证】
+            //读取配置文件
+            var audienceConfig = Configuration.GetSection("Audience");
+            var symmetricKeyAsBase64 = audienceConfig["Secret"];
+            var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
+            var signingKey = new SymmetricSecurityKey(keyByteArray);
+
+
+            //2.1【认证】
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+             .AddJwtBearer(o =>
+             {
+                 o.TokenValidationParameters = new TokenValidationParameters
+                 {
+                     ValidateIssuerSigningKey = true,
+                     IssuerSigningKey = signingKey,
+                     ValidateIssuer = true,
+                     ValidIssuer = audienceConfig["Issuer"],//发行人
+                     ValidateAudience = true,
+                     ValidAudience = audienceConfig["Audience"],//订阅人
+                     ValidateLifetime = true,
+                     ClockSkew = TimeSpan.Zero,
+                     RequireExpirationTime = true,
+                 };
+
+             });
+            #endregion
 
         }
 
@@ -80,6 +137,9 @@ namespace Blog.Core
                 config.RoutePrefix = ""; // 根目录直接访问swagger
 
             });
+
+            app.UseAuthentication();
+
             app.UseMvc();
         }
     }
