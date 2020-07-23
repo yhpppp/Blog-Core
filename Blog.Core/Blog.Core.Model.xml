@@ -4,24 +4,34 @@
         <name>Blog.Core.Model</name>
     </assembly>
     <members>
-        <member name="T:Blog.Core.Model.Love">
+        <member name="P:Blog.Core.Model.Models.Advertisement.Id">
             <summary>
-            这是爱
+            ID
             </summary>
         </member>
-        <member name="P:Blog.Core.Model.Love.Id">
+        <member name="P:Blog.Core.Model.Models.Advertisement.ImgUrl">
             <summary>
-            id
+            广告图片
             </summary>
         </member>
-        <member name="P:Blog.Core.Model.Love.Name">
+        <member name="P:Blog.Core.Model.Models.Advertisement.Title">
             <summary>
-            姓名
+            广告标题
             </summary>
         </member>
-        <member name="P:Blog.Core.Model.Love.Age">
+        <member name="P:Blog.Core.Model.Models.Advertisement.Url">
             <summary>
-            年龄
+            广告链接
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.Models.Advertisement.Remark">
+            <summary>
+            备注
+            </summary>
+        </member>
+        <member name="P:Blog.Core.Model.Models.Advertisement.Createdate">
+            <summary>
+            创建时间
             </summary>
         </member>
     </members>

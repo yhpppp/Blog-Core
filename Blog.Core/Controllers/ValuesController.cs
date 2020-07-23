@@ -38,18 +38,11 @@ namespace Blog.Core.Controllers
         }
 
         // POST api/values
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-        /// <summary>
-        /// test post
-        /// </summary>
-        /// <param name="love">model实体类参数</param>
         [HttpPost]
-        public void Post(Love love)
+        public void Post([FromBody] string value)
         {
         }
+
         // PUT api/values/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
