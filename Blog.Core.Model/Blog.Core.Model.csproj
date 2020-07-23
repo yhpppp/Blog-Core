@@ -9,4 +9,9 @@
     <DocumentationFile>..\Blog.Core\Blog.Core.Model.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="ViewModels\" />
+  </ItemGroup>
+
 </Project>

@@ -3,63 +3,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Blog.Core.Helper;
-using Blog.Core.Model;
+using Blog.Core.IServices;
+using Blog.Core.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog.Core.Controllers
 {
-    /// <summary>
-    /// 测试控制器
-    /// </summary>
-    [Route("api/[controller]")]
+    //[Produces("application/json")]
+    [Route("api/Blog")]
     [ApiController]
-    [ApiExplorerSettings(IgnoreApi =true)]
-    public class ValuesController : ControllerBase
+    [Authorize(Policy = "Admin")]
+    public class BlogController : ControllerBase
     {
+        // GET: api/Blog
         /// <summary>
-        /// 获取测试数据列表
+        /// Sum接口
         /// </summary>
+        /// <param name="i">参数i</param>
+        /// <param name="j">参数j</param>
         /// <returns></returns>
-        // GET api/values
         [HttpGet]
-        //[Authorize(Roles = "Admin")]
-        [Authorize(Policy = "SystemOrAdmin")]
-        public ActionResult<IEnumerable<string>> Get()
+        public int Get(int i, int j)
         {
-            return new string[] { "value1", "value2" };
+            IAdvertisementServices advertisementServices = new AdvertisementServices();
+            return advertisementServices.Sum(i, j);
         }
-
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        // GET: api/Blog/5
+        [HttpGet("{id}", Name = "Get")]
+        public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/values
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
-        /// <summary>
-        /// test post
-        /// </summary>
-        /// <param name="love">model实体类参数</param>
+        // POST: api/Blog
         [HttpPost]
-        public void Post(Love love)
+        public void Post([FromBody] string value)
         {
         }
-        // PUT api/values/5
+
+        // PUT: api/Blog/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        // 文档隐藏接口
-        [ApiExplorerSettings(IgnoreApi = true)]
         public void Delete(int id)
         {
         }
@@ -72,6 +63,7 @@ namespace Blog.Core.Controllers
         /// <param name="pass"></param>
         /// <returns></returns>
         [HttpGet("GetJWTToken")]
+        [AllowAnonymous]
         public async Task<object> GetJWTToken(string name, string pass)
         {
             string jwtStr = string.Empty;
