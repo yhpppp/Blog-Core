@@ -16,6 +16,11 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Blog.Core.Repository.sugar;
+using Autofac;
+using Blog.Core.Services;
+using Blog.Core.IServices;
+using Autofac.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Blog.Core
 {
@@ -29,7 +34,7 @@ namespace Blog.Core
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             //数据库配置
             BaseDBConfig.ConnectionString = Configuration.GetSection("AppSettings:SqlServerConnection").Value;
@@ -124,6 +129,27 @@ namespace Blog.Core
              });
             #endregion
 
+            #region AutoFac
+            // 实例化 AutoFac 容器
+            var builder = new ContainerBuilder();
+            // 注册要通过反射创建的组件
+            //builder.RegisterType<AdvertisementServices>().As<IAdvertisementServices>();
+
+            // 服务程序集注入方式
+            var assemblysServices = Assembly.Load("Blog.Core.Services");
+            // 指定已扫描程序集中的类型注册为提供所有其实现的接口。
+            builder.RegisterAssemblyTypes(assemblysServices).AsImplementedInterfaces();
+            var assemblysRepository = Assembly.Load("Blog.Core.Repository");//模式是 Load(解决方案名)
+            builder.RegisterAssemblyTypes(assemblysRepository).AsImplementedInterfaces();
+
+            // 将 services 填充 AutoFac 容器生成器
+            builder.Populate(services);
+            // 使用已进行的组件登记创建新的容器
+            var ApplicationContainer = builder.Build();
+
+            // AutoFac接管
+            return new AutofacServiceProvider(ApplicationContainer);
+            #endregion
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -11,14 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.4.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Blog.Core.IServices\Blog.Core.IServices.csproj" />
-    <ProjectReference Include="..\Blog.Core.Model\Blog.Core.Model.csproj" />
     <ProjectReference Include="..\Blog.Core.Repository\Blog.Core.Repository.csproj" />
     <ProjectReference Include="..\Blog.Core.Services\Blog.Core.Services.csproj" />
   </ItemGroup>

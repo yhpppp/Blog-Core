@@ -18,6 +18,11 @@ namespace Blog.Core.Controllers
     //[Authorize(Policy = "Admin")]
     public class BlogController : ControllerBase
     {
+        private readonly IAdvertisementServices _advertisementServices;
+        public BlogController(IAdvertisementServices advertisementServices)
+        {
+            _advertisementServices = advertisementServices;
+        }
         // GET: api/Blog
         /// <summary>
         /// Sum接口
@@ -28,8 +33,8 @@ namespace Blog.Core.Controllers
         [HttpGet]
         public int Get(int i, int j)
         {
-            IAdvertisementServices advertisementServices = new AdvertisementServices();
-            return advertisementServices.Sum(i, j);
+            
+            return _advertisementServices.Sum(i, j);
         }
         // GET: api/Blog/5
         /// <summary>
@@ -40,8 +45,9 @@ namespace Blog.Core.Controllers
         [HttpGet("{id}", Name = "Get")]
         public async Task<List<Advertisement>> Get(int id)
         {
-            IAdvertisementServices advertisementServices = new AdvertisementServices();
-            return await advertisementServices.Query(it => it.Id == id);
+            //IAdvertisementServices advertisementServices = new AdvertisementServices();
+            //return await advertisementServices.Query(it => it.Id == id);
+            return await _advertisementServices.Query(it => it.Id == id);
         }
 
         // POST: api/Blog
