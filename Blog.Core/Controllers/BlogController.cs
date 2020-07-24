@@ -38,10 +38,10 @@ namespace Blog.Core.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "Get")]
-        public List<Advertisement> Get(int id)
+        public async Task<List<Advertisement>> Get(int id)
         {
             IAdvertisementServices advertisementServices = new AdvertisementServices();
-            return advertisementServices.Query(it => it.Id == id);
+            return await advertisementServices.Query(it => it.Id == id);
         }
 
         // POST: api/Blog

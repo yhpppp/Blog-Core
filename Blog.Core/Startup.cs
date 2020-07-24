@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Blog.Core.Repository.sugar;
 
 namespace Blog.Core
 {
@@ -30,6 +31,9 @@ namespace Blog.Core
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //数据库配置
+            BaseDBConfig.ConnectionString = Configuration.GetSection("AppSettings:SqlServerConnection").Value;
+
             services.AddMvc(options =>
             {
                 // Output xml
